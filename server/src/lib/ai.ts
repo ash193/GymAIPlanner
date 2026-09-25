@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import OpenAI from "openai";
 import dotenv from "dotenv";
-import { UserProfile, TrainingPlan } from "../../types";
+import type { UserProfile, TrainingPlan } from "../../types";
 
 dotenv.config();
 
@@ -49,7 +50,11 @@ export async function generateTrainingPlan(
         },
       ],
       temperature: 0.7,
-      response_format: { type: "json_object" },
+      // extra_body: {
+      //   reasoning: {
+      //     effort: "low",
+      //   },
+      // },
     });
 
     const content = completion.choices[0].message.content;

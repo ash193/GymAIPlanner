@@ -7,6 +7,7 @@ import NavBar from "./components/layout/Navbar";
 import { NeonAuthUIProvider } from "@neondatabase/neon-js/auth/react";
 import { authClient } from "./lib/auth";
 import AuthProvider from "./context/AuthContext";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
               <Routes>
                 <Route index element={<Home />} />
                 <Route path="/onboarding" element={<Onboarding />} />
+                <Route path="/profile" element={<Profile />} />
                 <Route path="/auth/:pathname" element={<Auth />} />
                 <Route path="/account/:pathname" element={<Account />} />
               </Routes>
