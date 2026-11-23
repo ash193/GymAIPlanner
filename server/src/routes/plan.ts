@@ -7,10 +7,7 @@ export const planRouter = Router();
 
 planRouter.post("/generate", async (req: Request, res: Response) => {
   try {
-    const { userId } = req.body;
-    if (!userId) {
-      return res.status(400).json({ error: "User Id is required" });
-    }
+    const userId = res.locals.userId;
     const profile = await prisma.user_profiles.findUnique({
       where: { user_id: userId },
     });
@@ -35,7 +32,6 @@ planRouter.post("/generate", async (req: Request, res: Response) => {
       console.error("AI generation failed:", error);
       return res.status(500).json({
         error: "Failed to generate training plan. Please try again.",
-        details: error instanceof Error ? error.message : "Unknown error",
       });
     }
 
@@ -61,10 +57,7 @@ planRouter.post("/generate", async (req: Request, res: Response) => {
 
 planRouter.get("/current", async (req: Request, res: Response) => {
   try {
-    const userId = req.query.userId as string;
-    if (!userId) {
-      return res.status(400).json({ error: "User ID is required" });
-    }
+    const userId = res.locals.userId;
     const plan = await prisma.training_plans.findFirst({
       where: { user_id: userId },
       orderBy: { created_at: "desc" },

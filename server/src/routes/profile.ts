@@ -5,11 +5,9 @@ export const profileRouter = Router();
 
 profileRouter.post("/", async (req: Request, res: Response) => {
   try {
-    const { userId, ...profileData } = req.body;
+    const userId = res.locals.userId;
+    const profileData = req.body;
 
-    if (!userId) {
-      return res.status(400).json({ error: "User ID is required" });
-    }
     const {
       goal,
       experience,

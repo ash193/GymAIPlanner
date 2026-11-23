@@ -1,10 +1,19 @@
 import type { UserProfile } from "../types";
+import { getAuthToken } from "./auth";
 const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
 async function post(path: string, body: object) {
+  const token = await getAuthToken();
+
+  if (!token) {
+    throw new Error("Authentication required");
+  }
   const res = await fetch(`${BASE_URL}/api${path}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify(body),
   });
   if (!res.ok)
@@ -15,7 +24,16 @@ async function post(path: string, body: object) {
 }
 
 async function get(path: string) {
-  const res = await fetch(`${BASE_URL}/api${path}`);
+  const token = await getAuthToken();
+
+  if (!token) {
+    throw new Error("Authentication required");
+  }
+  const res = await fetch(`${BASE_URL}/api${path}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   if (!res.ok) {
     throw new Error(
       (await res.json().catch(() => ({}))).error || "Request failed",
@@ -25,17 +43,14 @@ async function get(path: string) {
 }
 
 export const api = {
-  saveProfile: (
-    userId: string,
-    profile: Omit<UserProfile, "userId" | "updatedAt">,
-  ) => {
-    return post("/profile", { userId, ...profile });
+  saveProfile: (profile: Omit<UserProfile, "userId" | "updatedAt">) => {
+    return post("/profile", profile);
   },
-  generatePlan: (userId: string) => {
-    return post("/plan/generate", { userId });
+  generatePlan: () => {
+    return post("/plan/generate", {});
   },
 
-  getCurrentPlan: (userId: string) => {
-    return get(`/plan/current?userId=${userId}`);
+  getCurrentPlan: () => {
+    return get("/plan/current");
   },
 };

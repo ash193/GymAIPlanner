@@ -1,3 +1,9 @@
-import { createAuthClient } from "@neondatabase/neon-js/auth";
+import { createInternalNeonAuth } from "@neondatabase/auth";
 
-export const authClient = createAuthClient(import.meta.env.VITE_NEON_AUTH_URL);
+const auth = createInternalNeonAuth(import.meta.env.VITE_NEON_AUTH_URL);
+
+// Preserve the existing authentication API
+export const authClient = auth.adapter;
+
+// Expose JWT retrieval separately
+export const getAuthToken = () => auth.getJWTToken();
